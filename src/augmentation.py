@@ -28,93 +28,42 @@ mask_path=[] #empty list created
 
 for name in os.listdir(MASK_DIR):
     mask_path.append(os.path.join(MASK_DIR,name))
+image_path.sort()
+mask_path.sort()
+valid_size = 0.30
+indices = np.random.permutation(len(image_path))
+valid_ind = int(len(indices) * valid_size)
+train_input_path_list = image_path[valid_ind:]#We got the elements of the image_path_list list from 1905 to the last element
+train_label_path_list = mask_path[valid_ind:]#We got the elements of the mask_path_list list from 1905 to the last element
 
-
-train_input_path_list = image_path[0:]#We got the elements of the image_path_list list from 1905 to the last element
-train_label_path_list = mask_path[0:]#We got the elements of the mask_path_list list from 1905 to the last element
 
 for image in tqdm.tqdm(train_input_path_list):
+    '''
+    img=Image.open(image) 
+    img_aug = T.functional.adjust_brightness(img,brightness_factor=0.5)
+    #imgX = np.flip(img_aug, axis=1)
+    color_aug = T.ColorJitter(brightness=0.4, contrast=0.4, hue=0.06)
+    new3_path=image[:-4]+"-1"+".jpg"
+    new3_path=new3_path.replace('images', 'augmentation2')
+    imgconvert.save(new3_path)
+    '''
     img=Image.open(image)
-    color_aug = T.ColorJitter(brightness=0.6, contrast=0.4, hue=0.05)
+    color_aug = T.ColorJitter(brightness=0.4, contrast=0.4, hue=0.06)
 
     img_aug = color_aug(img)
     new_path=image[:-4]+"-1"+".png"
-    new_path=new_path.replace('images', 'augmentation')
+    new_path=new_path.replace('images', 'augmentation2')
     img_aug=np.array(img_aug)
     cv2.imwrite(new_path,img_aug)
-  
-    
-    # flipUD = np.flipud(img)
-    # new2_path=image[:-4]+"-2"+".png"
-    # new2_path=new2_path.replace('image', 'augmentation')
-    # cv2.imwrite(new2_path,flipUD )
-
-    
-    # rotated = transform.rotate(img)
-    
-    # new3_path=image[:-4]+"-3"+".png"
-    # new3_path=new3_path.replace('image', 'augmentation')
-    # cv2.imwrite(new3_path,rotated)
-
-    
-    # transform = AffineTransform(translation=(25,25))
-    # wrapShift = warp(img,transform,mode='wrap')
-    # new4_path=image[:-4]+"-4"+".png"
-    # new4_path=new4_path.replace('image', 'augmentation')
-    # cv2.imwrite(new4_path,wrapShift)
-
-    # sigma=0.155
-    # #add random noise to the image
-    # noisyRandom = random_noise(img,var=sigma**2)
-    # plt.imshow(noisyRandom)
-    # new5_path=image[:-4]+"-5"+".png"
-    # new5_path=new5_path.replace('image', 'augmentation')
-    # cv2.imwrite(new5_path,wrapShift)
-    
-    # noisyRandom=random_noise(img,mode='s&p',clip=True)
-    # new5_path=image[:-4]+"-5"+".png"
-    # new5_path=new5_path.replace('image', 'augmentation')
-    # cv2.imwrite(new5_path,noisyRandom)
-    
-
     
 for mask in tqdm.tqdm(train_label_path_list):
     msk=cv2.imread(mask)
-    new_mask=msk
-    newm_path=mask[:-4]+"-1"+".png"
-    newm_path=newm_path.replace('masks', 'augmentation_mask')
-    cv2.imwrite(newm_path,new_mask)
+    #maskX = np.flip(msk, axis=1) //ters çevirmek istersek
+    newm2_path=mask[:-4]+"-1"+".png"
+    newm2_path=newm2_path.replace('masks', 'augmentation_mask2')
+    cv2.imwrite(newm2_path,maskX )
     
-    # flipUD = np.flipud(msk)
-    # newm2_path=mask[:-4]+"-2"+".png"
-    # newm2_path=newm2_path.replace('masks', 'augmentation_mask')
-    # cv2.imwrite(newm2_path,flipUD )
-    
-    # rotated = transform.rotate(msk)
-    # newm3_path=image[:-4]+"-3"+".png"
-    # newm3_path=newm3_path.replace('masks', 'augmentation_mask')
-    # cv2.imwrite(newm3_path,rotated)
-    
-    # transform = AffineTransform(translation=(25,25))
-    # wrapShift = warp(msk,transform,mode='wrap')
-    # newm4_path=mask[:-4]+"-4"+".png"
-    # newm4_path=newm4_path.replace('masks', 'augmentation_mask')
-    # cv2.imwrite(newm4_path,wrapShift)
-    
-    
-    # sigma=0.155
-    # #add random noise to the image
-    # noisyRandom = random_noise(msk,var=sigma**2)
-    # newm5_path=mask[:-4]+"-5"+".png"
-    # newm5_path=newm5_path.replace('masks', 'augmentation_mask')
-    # cv2.imwrite(newm5_path,wrapShift)
-    
-    # noisyRandom=img
-    # newm5_path=image[:-4]+"-5"+".png"
-    # newm5_path=newm5_path.replace('masks', 'augmentation_mask')
-    # cv2.imwrite(newm5_path,noisyRandom)
-    
-    
+
     
 
     

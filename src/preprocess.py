@@ -1,15 +1,4 @@
-"""
-We need to prepare the data to feed the network: we have - data/masks, data/images - directories where we prepared masks and input images. Then, convert each file/image into a tensor for our purpose.
-We need to write two functions in src/preprocess.py:
-    - one for feature/input          -> tensorize_image()
-    - the other for mask/label    -> tensorize_mask()
-Our model will accepts the input/feature tensor whose dimension is
-[batch_size, output_shape[0], output_shape[1], 3]
-&
-the label tensor whose dimension is
-[batch_size, output_shape[0], output_shape[1], 2].
-At the end of the task, our data will be ready to train the model designed.
-"""
+
 
 
 import glob
@@ -20,21 +9,7 @@ from constant import *
 
 
 def tensorize_image(image_path_list, output_shape, cuda=False):
-    """
-    Parameters
-    ----------
-    image_path_list : list of strings
-        [“data/images/img1.png”, .., “data/images/imgn.png”] corresponds to
-        n images to be trained each step.
-    output_shape : tuple of integers
-        (n1, n2): n1, n2 is width and height of the DNN model’s input.
-    cuda : boolean, optional
-        For multiprocessing,switch to True. The default is False.
-    Returns
-    -------
-    torch_image : Torch tensor
-        Batch tensor whose size is [batch_size, output_shape[0], output_shape[1], C].       For this case C = 3.
-    """
+    
     # Create empty list
     local_image_list = []
 
@@ -64,23 +39,7 @@ def tensorize_image(image_path_list, output_shape, cuda=False):
     return torch_image
 
 def tensorize_mask(mask_path_list, output_shape, n_class, cuda=False):
-    """
-    Parameters
-    ----------
-    mask_path_list : list of strings
-        [“data/masks/mask1.png”, .., “data/masks/maskn.png”] corresponds
-        to n masks to be used as labels for each step.
-    output_shape : tuple of integers
-        (n1, n2): n1, n2 is width and height of the DNN model’s input.
-    n_class : integer
-        Number of classes.
-    cuda : boolean, optional
-        For multiprocessing, switch to True. The default is False.
-    Returns
-    -------
-    torch_mask : TYPE
-        DESCRIPTION.
-    """
+    
 
     # Create empty list
     local_mask_list = []
@@ -121,34 +80,10 @@ def decode_and_convert_image(data, n_class):
                     decoded_data[i, j] = 255
                 else: #(tensor[1][i,j] == 1):
                     decoded_data[i, j] = 0
-        # print(decoded_data)
-        
-        # image.show()
-        # plt.imshow(decoded_data, cmap="gray")
-        # plt.show()
         decoded_data_list.append(decoded_data)
-    
-    # decoded_data_list[0].show() 
 
     return decoded_data_list
 def image_mask_check(image_path_list, mask_path_list):
-    """
-    Since it is supervised learning, there must be an expected output for each
-    input. This function assumes input and expected output images with the
-    same name.
-    Parameters
-    ----------
-    image_path_list : list of strings
-        [“data/images/images1.png”, .., “data/images/imagesn.png”] corresponds
-        to n original image to be used as features.
-    mask_path_list : list of strings
-        [“data/masks/mask1.png”, .., “data/masks/maskn.png”] corresponds
-        to n masks to be used as labels.
-    Returns
-    -------
-    bool
-        Returns true if there is expected output/label for each input.
-    """
 
     # Check list lengths
     if len(image_path_list) != len(mask_path_list):
@@ -167,19 +102,7 @@ def image_mask_check(image_path_list, mask_path_list):
 
 ############################ TODO ################################
 def torchlike_data(data):
-    """
-    Change data structure according to Torch Tensor structure where the first
-    dimension corresponds to the data depth.
-    Parameters
-    ----------
-    data : Array of uint8
-        Shape : HxWxC.
-    Returns
-    -------
-    torchlike_data_output : Array of float64
-        Shape : CxHxW.
-    """
-
+  
     # Obtain channel value of the input
     n_channels = data.shape[2]
 
@@ -193,20 +116,7 @@ def torchlike_data(data):
     return torchlike_data_output
 
 def one_hot_encoder(data, n_class):
-    """
-    Returns a matrix containing as many channels as the number of unique
-    values ​​in the input Matrix, where each channel represents a unique class.
-    Parameters
-    ----------
-    data : Array of uint8
-        2D matrix.
-    n_class : integer
-        Number of class.
-    Returns
-    -------
-    encoded_data : Array of int64
-        Each channel labels for a class.
-    """
+    
     if len(data.shape) != 2:
         print("It should be same with the layer dimension, in this case it is 2")
         return
@@ -241,40 +151,4 @@ def one_hot_encoder(data, n_class):
 
 if __name__ == '__main__':
 
-  """ # # Access images
-    image_list = glob.glob(os.path.join(IMAGE_DIR, '*'))
-    image_list.sort()
-
-
-    # Access masks
-    mask_list = glob.glob(os.path.join(MASK_DIR, '*'))
-    mask_list.sort()
-
-
-    # Check image-mask match
-    if image_mask_check(image_list, mask_list):
-
-        # Take images to number of batch size
-        batch_image_list = image_list[:BACTH_SIZE]
-
-        # Convert into Torch Tensor
-        batch_image_tensor = tensorize_image(batch_image_list, (224, 224))
-
-        # Check
-        print("For features:\ndtype is "+str(batch_image_tensor.dtype))
-        print("Type is "+str(type(batch_image_tensor)))
-        print("The size should be ["+str(BACTH_SIZE)+", 3, "+str(HEIGHT)+", "+str(WIDTH)+"]")
-        print("Size is "+str(batch_image_tensor.shape)+"\n")
-
-        # Take masks to number of batch size
-        batch_mask_list = mask_list[:BACTH_SIZE]
-
-        # Convert into Torch Tensor
-        batch_mask_tensor = tensorize_mask(batch_mask_list, (HEIGHT, WIDTH), 2)
-
-        # Check
-        print("For labels:\ndtype is "+str(batch_mask_tensor.dtype))
-        print("Type is "+str(type(batch_mask_tensor)))
-        print("The size should be ["+str(BACTH_SIZE)+", 2, "+str(HEIGHT)+", "+str(WIDTH)+"]")
-        print("Size is "+str(batch_mask_tensor.shape))
-        """
+  
