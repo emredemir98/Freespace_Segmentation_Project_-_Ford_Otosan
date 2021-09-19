@@ -61,10 +61,8 @@ I have included an example json file below.
  ```
  ---
 ### Augmentation
-<pre>
-                   BEFORE AUGMENTATİON                                                  AFTER AUGMENTATİON
-</pre>
-![augmentation](images/augmentation.jpg)
+
+![augmentation](images/augmentation1.jpg)
 
 I augmented the photos to improve the model. I changed the mirror image and brightness of the photos for this process
 ```sh
@@ -102,12 +100,9 @@ optimizer = optim.Adam(model.parameters(), lr=0.0001)
  ---
 ### Results
 ![allphotos](images/graph.png)
-<pre>
-                 RAW                                      LABELED                                    PREDİCTED
-</pre>
 
 
-![allphotos](images/p1-test.jpg)
+![allphotos](images/p1-test1.jpg)
 
 
 
