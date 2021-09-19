@@ -1,3 +1,4 @@
+from unet import UNet
 import torch
 import glob
 import tqdm
@@ -7,7 +8,7 @@ import numpy as np
 import cv2
 import os
 from preprocess import tensorize_image
-from mask_on_image import write_mask_on_image
+import torch.nn.functional as F
 
 
 valid_size = 0.3#Validation dataset is used to evaluate a particular model, but this is for frequent evaluation.
@@ -18,7 +19,7 @@ epochs = 25#Epoch count is the number of times all training data is shown to the
 input_shape = (224, 224)#What size will the image resize
 n_classes = 2
 
-model_path = 'model/model2.pt'
+model_path = 'model/model18-4.pt'
 model = torch.load(model_path,map_location=torch.device('cpu'))
 model.eval()
 
@@ -26,10 +27,10 @@ SRC_DIR = os.getcwd()#The method tells us the location of the current working di
 ROOT_DIR = os.path.join(SRC_DIR, '..')
 DATA_DIR = os.path.join(ROOT_DIR, 'data')
 MASK_DIR = os.path.join(DATA_DIR, 'masks')
-IMAGE_DIR = os.path.join(DATA_DIR, 'test_data')
+IMAGE_DIR = os.path.join(DATA_DIR, 'test_images')
 
 
-predict_file_path = '../data/predict_data/'
+predict_file_path = '../data/model18-4/'
 #for mask visualize from model output
 # y=0
 # for test_img in test:
@@ -38,7 +39,7 @@ predict_file_path = '../data/predict_data/'
 #     print(output.shape)
 #     torchvision.utils.save_image(output,('../data/model_image/'+str(y)+'.png'))
 #     y+=1
-test_data_list = os.listdir('../data/test_data/')
+test_data_list = os.listdir('../data/test_images/')
 image_path_list = glob.glob(os.path.join(IMAGE_DIR, '*'))
 image_path_list.sort()
 #The names of the files in the IMAGE_DIR path are listed and sorted
@@ -50,23 +51,32 @@ valid_ind = int(test_ind + len(indices) * valid_size)
 test_input_path_list = image_path_list[:test_ind] #Get 0 to 476 elements of the image_path_list list
 test_label_path_list = mask_path_list[:test_ind]#Get 0 to 476 elements of the mask_path_list list
 def predict(test_input_path_list):
-
-    for i in tqdm.tqdm(range(len(test_input_path_list))):
+     
+ 
+     for i in tqdm.tqdm(range(len(test_input_path_list))):
         batch_test = test_input_path_list[i:i+1]
         test_input = tensorize_image(batch_test, input_shape)
         outs = model(test_input)
+        outs = F.upsample_bilinear(outs, size=(1080, 1920))
         out=torch.argmax(outs,axis=1)
         out_cpu = out.cpu()
         outputs_list=out_cpu.detach().numpy()
         mask=np.squeeze(outputs_list,axis=0)
-            
+             
         predict = predict_file_path + test_data_list[i]
-            
+             
         img=cv2.imread(batch_test[0])
-        mg=cv2.resize(img,(224,224))
+        mg=cv2.resize(img,(1920,1080))
+        mask_ind   = mask == 1
         cpy_img  = mg.copy()
         mg[mask==0 ,:] = (255, 0, 125)
         opac_image=(mg/2+cpy_img/2).astype(np.uint8)
+        predict_name=batch_test[0]
+        predict_path=predict_name.replace('test_images', 'predict_son')
         cv2.imwrite(predict,opac_image.astype(np.uint8))
+ 
 
-predict(test_input_path_list)
+if __name__ == "__main__":         
+    
+
+    predict(test_input_path_list) 

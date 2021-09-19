@@ -1,4 +1,4 @@
-#from model1 import FoInternNet
+
 from unet import UNet
 from preprocess import tensorize_image, tensorize_mask, image_mask_check
 import os
