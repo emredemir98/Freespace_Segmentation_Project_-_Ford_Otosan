@@ -97,6 +97,7 @@ criterion = nn.BCELoss()
 optimizer = optim.Adam(model.parameters(), lr=0.0001)
  ```
  You can find the codes of this section from the [train.py](https://github.com/emredemir98/Freespace_Segmentation_Project_-_Ford_Otosan/blob/main/src/train.py) file.
+ 
  ---
 ### Results
 ![allphotos](images/graph.png)
