@@ -2,6 +2,9 @@
 
 In this project, I developed a deep learning project that detects drivable areas with pytorch and other libraries.
 
+The output we will get at the end of the project will be like this.
+
+![allphotos](images/gif.gif)
 
 ---
 ### Json To Mask
